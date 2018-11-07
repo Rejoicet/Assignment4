@@ -10,6 +10,7 @@ public:
   unsigned int size() const;
   bool isEmpty() const;
   T front() const;
+  T back () const;
   void enqueue (const T& e);
   void dequeue();
   void printList() const;
@@ -47,6 +48,12 @@ template <class T>
 T GenQueue<T>::front() const
 {
   dList.front();
+}
+
+template <class T>
+T GenQueue<T>::back() const
+{
+  dList.back();
 }
 
 template <class T>

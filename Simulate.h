@@ -10,6 +10,7 @@ public:
 
 private:
   ifstream registrarFile;
-  int a, b, f, numwindows, timer, idle, numtwindows, nstudents, nswaittime, sum, median, medi, nten, l, widle;
+  int a, b, f, numwindows, timer, idle, numtwindows, nstudents;
+  int nswaittime, sum, median, medi, nten, l, widle, idl;
   double mean, total, wmean, tot;
 };

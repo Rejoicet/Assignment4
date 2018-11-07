@@ -2,13 +2,14 @@
 #include "GenDlinkedlist.h"
 #include "GenQueue.h"
 #include "Simulate.h"
+#include <iomanip>              //to set the precision of output to 2 decimal places
 using namespace std;
 
 Simulate::Simulate()
 {
   timer = 0;
   numtwindows = 0;
-  idle = widle = 0;
+  idle = widle = idl = 0;
   nstudents = 0;
   nswaittime = 0;
   f = l = 0;
@@ -49,13 +50,11 @@ int Simulate::startSimulate (string filename)
     arrival.enqueue(a);
     registrarFile >> a;
     numarrival.enqueue(a);
-    for (int i = 0; i < numarrival.front(); i++) {
+    for (int i = 0; i < numarrival.back(); i++) {
       registrarFile >> a;
       stime.enqueue(a);
     }
   }
-
-  //stime.remove();
 
   while (true) {
 
@@ -81,15 +80,15 @@ int Simulate::startSimulate (string filename)
         b = nstudents;
         if (idle > nstudents) {
           for (int j = 0; j < b; j++) {		//remove the students from the queue and
-                                                  //take them to the idle windows as applicable
+                                          //take them to the idle windows as applicable
              numstudents.dequeue();
              swaittime.sort (timer, stimer.front(), sum, medi);
+             cout << "Sum: " << sum << endl;
              median = medi;
              medi = 0;
              if (timer - stimer.front() > 10) {
                ++nten;
              }
-             //swaittime.addBack (timer - stimer.front());
              twindows.addBack (stime.front());
              stime.dequeue();
              stimer.dequeue();
@@ -103,12 +102,12 @@ int Simulate::startSimulate (string filename)
                                        //take them to the idle windows as applicable
              numstudents.dequeue();
              swaittime.sort (timer, stimer.front(), sum, medi);
+             cout << "Sum: " << sum << endl;
              median = medi;
              medi = 0;
              if (timer - stimer.front() > 10) {
                ++nten;
              }
-             //swaittime.addBack (timer - stimer.front());
              twindows.addBack (stime.front());
              stime.dequeue();
              stimer.dequeue();
@@ -120,16 +119,15 @@ int Simulate::startSimulate (string filename)
        }
     }
 
-    if (twindows.isEmpty() != true) {	//reducing all the elements in twindows by 1
-      twindows.reduce();
-    }
+    idl = numwindows - numtwindows;
 
-    for (int i = 0; i < idle; i++) {
+    for (int i = 0; i < idl; i++) {
       myWindow[i] = myWindow[i] + 1;
     }
 
-    /*cout << timer << endl;
-    cout << idle << endl;*/
+    if (twindows.isEmpty() != true) {	//reducing all the elements in twindows by 1
+      twindows.reduce();
+    }
 
     if (arrival.isEmpty() == true) {	//if twindows is empty at the end of timer i,
                                   //exit the simulation as there is nothing more to simulate
@@ -139,6 +137,15 @@ int Simulate::startSimulate (string filename)
     }
 
     ++timer;
+  }
+
+  for (int i = 0; i < numwindows; i++) {
+    if (myWindow[i] == 0) {
+      continue;
+    }
+    else {
+      myWindow[i] = myWindow[i] - 1;
+    }
   }
 
   for (int i = 0; i < numwindows; i++) {
@@ -155,12 +162,12 @@ int Simulate::startSimulate (string filename)
   mean = total/nswaittime;
   wmean = tot/numwindows;
 
-  cout << "The mean student wait time is " << mean << endl;
-  cout << "The median student wait time is " << median << endl;
-  cout << "The longest student wait time is " << swaittime.back() << endl;
+  cout << fixed << setprecision(2) << "The mean student wait time is " << mean << " mins" << endl;
+  cout << "The median student wait time is " << median << " mins" << endl;
+  cout << "The longest student wait time is " << swaittime.back() << " mins" << endl;
   cout << "The number of students waiting over 10 minutes is " << nten << endl;
-  cout << "The mean window idle time is " << wmean << endl;
-  cout << "The longest window idle time is " << l << endl;
+  cout << "The mean window idle time is " << wmean << " mins" << endl;
+  cout << "The longest window idle time is " << l << " mins" << endl;
   cout << "Number of windows idle for over 5 minutes is " << widle << endl;
 
   registrarFile.close();

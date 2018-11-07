@@ -19,6 +19,7 @@ private:
   T elem;
   GenNode<T> *prev;
   GenNode<T> *next;
+  GenNode<T> *header;
 
   friend class GenDlinkedlist<T>;
   friend class GenQueue<T>;
